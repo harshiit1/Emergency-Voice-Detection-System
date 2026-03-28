@@ -8,10 +8,12 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>ALERTI-FY</Text>
-      <Text style={styles.sub}>
-        SMART EMERGENCY VOICE DETECTION & RESPONSE SYSTEM
-      </Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>ALERTI-FY</Text>
+        <Text style={styles.sub}>
+          SMART EMERGENCY VOICE DETECTION & RESPONSE SYSTEM
+        </Text>
+      </View>
 
       <View style={styles.micRing}>
         <Svg style={styles.micIcon} viewBox="0 0 24 24">
@@ -60,13 +62,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  title: { color: Colors.text, fontSize: 24, fontWeight: "bold" },
+  header: {
+    position: "absolute",
+    top: 100,
+    alignItems: "center",
+  },
+  title: {
+    color: Colors.text,
+    fontSize: 24,
+    fontWeight: "bold",
+    letterSpacing: 1,
+  },
   sub: {
     color: Colors.subText,
-    marginBottom: 20,
+    marginTop: 6,
     textAlign: "center",
-    paddingHorizontal: 20,
-    fontSize: 12,
+    paddingHorizontal: 30,
+    fontSize: 11,
+    lineHeight: 16,
   },
   mic: {
     width: 100,
@@ -75,14 +88,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#111",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
   },
-  listen: { color: Colors.green, marginBottom: 20 },
-  button: { backgroundColor: Colors.red, padding: 12, borderRadius: 10 },
+  listen: {
+    color: Colors.green,
+    marginTop: 15,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  button: {
+    backgroundColor: Colors.red,
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+    borderRadius: 12,
+    position:'relative',
+    top: 120
+  },
   btnText: { color: "#fff", fontWeight: "600" },
   micRing: {
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 10,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: "rgba(226,75,74,0.1)",
   },
   micIcon: {
     width: 60,
