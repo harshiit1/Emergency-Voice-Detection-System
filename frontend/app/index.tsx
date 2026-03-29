@@ -2,9 +2,21 @@ import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Svg, { Line, Path, Rect } from "react-native-svg";
 import { Colors } from "../constants/colors";
+import { useEmergencyListener } from "./listener";
+import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
+
+  const { startContinuousListening, stopContinuousListening } =
+    useEmergencyListener((text) => {
+      router.push("/trigger");   
+    });
+
+  useEffect(() => {
+    startContinuousListening();
+    return () => stopContinuousListening();
+  }, []);
 
   return (
     <View style={styles.container}>
