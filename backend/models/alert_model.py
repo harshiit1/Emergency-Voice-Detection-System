@@ -8,15 +8,16 @@ def insert_emergency_alert(data):
         INSERT INTO EmergencyEventMaster (
                 EventId, 
                 UserId, 
+                Transcript, 
                 Latitude, 
                 Longitude, 
                 Status,
                 CreatedOn,
                 ModifiedOn
             )
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING UserId, Status, CreatedOn;
-    """, (data.EventId,data.UserId, data.Latitude, data.Longitude, data.Status, data.CreatedOn, data.ModifiedOn))
+    """, (data.EventId, data.UserId, data.Transcript, data.Latitude, data.Longitude, data.Status, data.CreatedOn, data.ModifiedOn))
 
     result = cur.fetchone()
     conn.commit()
