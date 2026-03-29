@@ -1,4 +1,5 @@
 from core.db import get_connection
+from services.maps_services import generate_maps_link
 
 def insert_emergency_alert(data):
     conn = get_connection()
@@ -6,7 +7,7 @@ def insert_emergency_alert(data):
 
     cur.execute("""
         INSERT INTO EmergencyEventMaster (
-                EventId, 
+                AlertId, 
                 UserId, 
                 Transcript, 
                 Latitude, 
@@ -17,7 +18,7 @@ def insert_emergency_alert(data):
             )
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING UserId, Status, CreatedOn;
-    """, (data.EventId, data.UserId, data.Transcript, data.Latitude, data.Longitude, data.Status, data.CreatedOn, data.ModifiedOn))
+    """, (data.AlertId, data.UserId, data.Transcript, data.Latitude, data.Longitude, data.Status, data.CreatedOn, data.ModifiedOn))
 
     result = cur.fetchone()
     conn.commit()
@@ -44,18 +45,48 @@ def get_emergency_details():
 def update_emergency_status(AlertId, Status):
     conn = get_connection()
     cur = conn.cursor()
+    try:
+        cur.execute("""
+            UPDATE EmergencyEventMaster
+            SET Status=%s
+            WHERE AlertId=%s
+            RETURNING AlertId, Status;
+        """, (Status, AlertId))
+
+        result = cur.fetchone()
+        conn.commit()
+        return result
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cur.close()
+        conn.close()
+
+
+def get_pending_emergency_details():
+    conn = get_connection()
+    cur = conn.cursor()
 
     cur.execute("""
-        UPDATE EmergencyEventMaster
-        SET Status=%s
-        WHERE AlertId=%s
-        RETURNING UserId, Status;
-    """, (Status, AlertId))
-
-    result = cur.fetchone()
-    conn.commit()
+         SELECT AlertId, Status, CreatedOn, Latitude, Longitude 
+        FROM EmergencyEventMaster 
+        WHERE Status = 'PENDING' 
+        ORDER BY CreatedOn DESC;
+    """)
+    data = cur.fetchall()
 
     cur.close()
     conn.close()
+    pending_alerts = []
+    for row in data:
+        pending_alerts.append({
+        "AlertId": row[0], 
+        "Status": row[1],
+        "CreatedOn": row[2],
+        "Latitude": row[3],
+        "Longitude": row[4],
+        "MapsURL": generate_maps_link(row[3], row[4])
+        })
 
-    return result
+    return pending_alerts

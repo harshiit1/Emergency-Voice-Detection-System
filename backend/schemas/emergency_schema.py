@@ -3,11 +3,11 @@ from datetime import datetime
 from typing import Literal
 
 class IEmergencyModel(BaseModel):
-    EventId: int
+    AlertId: int
     UserId: int
     Transcript: str
     Latitude: float
     Longitude: float
-    Status: Literal["PENDING" ,"RECEIVED", "ASSIGNED"]
+    Status: Literal["PENDING" ,"ACCEPTED"]
     CreatedOn: datetime
     ModifiedOn: datetime | None = None
