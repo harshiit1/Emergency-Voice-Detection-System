@@ -4,19 +4,30 @@ import Svg, { Line, Path, Rect } from "react-native-svg";
 import { Colors } from "../constants/colors";
 import { useEmergencyListener } from "./listener";
 import { useEffect } from "react";
+import { handleEmergency } from "@/services/apiService";
 
 export default function Home() {
   const router = useRouter();
 
   const { startContinuousListening, stopContinuousListening } =
     useEmergencyListener((text) => {
-      router.push("/trigger");   
+      router.push("/trigger");
     });
 
   useEffect(() => {
     startContinuousListening();
     return () => stopContinuousListening();
   }, []);
+
+  const onSendAlert = async () => {
+    try {
+      // This gets GPS and sends to backend /AddEmergencyAlert
+      await handleEmergency("Emergency Activated");
+      router.push("/trigger");
+    } catch (error) {
+      alert("Failed to send location. Check internet/permissions.");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -60,8 +71,21 @@ export default function Home() {
 
       <Text style={styles.listen}>Listening...</Text>
 
-      <Pressable style={styles.button} onPress={() => router.push("/trigger")}>
+      <Pressable
+        style={styles.button}
+        onPress={() => {
+          onSendAlert();
+          router.push("/trigger");
+        }}
+      >
         <Text style={styles.btnText}>Simulate Emergency</Text>
+      </Pressable>
+
+      <Pressable
+        style={styles.transponderLink}
+        onPress={() => router.push("/transponder")}
+      >
+        <Text style={styles.transponderText}>Switch to Transponder Mode</Text>
       </Pressable>
     </View>
   );
@@ -112,8 +136,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 40,
     borderRadius: 12,
-    position:'relative',
-    top: 120
+    position: "relative",
+    top: 120,
   },
   btnText: { color: "#fff", fontWeight: "600" },
   micRing: {
@@ -128,5 +152,18 @@ const styles = StyleSheet.create({
   micIcon: {
     width: 60,
     height: 60,
+  },
+  transponderLink: {
+    position: "absolute",
+    bottom: 70,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+    borderRadius: 8,
+  },
+  transponderText: {
+    color: Colors.subText,
+    fontSize: 13,
+    fontWeight: "500",
   },
 });

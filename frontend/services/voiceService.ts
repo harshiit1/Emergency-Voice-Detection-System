@@ -36,6 +36,8 @@ export const stopRecording = async () => {
     if (!recordingInstance) {
       throw new Error("No active recording");
     }
+    const status = await recordingInstance.getStatusAsync();
+    if (!status.isRecording) return null;
 
     await recordingInstance.stopAndUnloadAsync();
 

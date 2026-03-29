@@ -5,7 +5,6 @@ import {
   handleEmergency,
   uploadAudioForTranscription,
 } from "@/services/apiService";
-import { getCurrentLocation } from "@/services/locationService";
 
 export const useEmergencyListener = (
   onEmergencyDetected: (text: string) => void,
@@ -15,40 +14,41 @@ export const useEmergencyListener = (
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const listenLoop = useCallback(async () => {
-    if (!isListening.current || isProcessing.current) return;
+      if (!isListening.current || isProcessing.current) return;
 
     try {
+      isProcessing.current = true; // LOCK
+
       await startRecording();
-      await getCurrentLocation();
+
       await new Promise((resolve) => {
-        timeoutRef.current = setTimeout(resolve, 3000);
+        timeoutRef.current = setTimeout(resolve, 4000);
       });
 
       const uri = await stopRecording();
-
+      
+      isProcessing.current = false; 
       if (isListening.current) {
-        listenLoop();
+        listenLoop(); 
       }
 
-      isProcessing.current = false;
-
       if (uri) {
-        const result = await uploadAudioForTranscription(uri);
-
-        if (result?.text && includes_emergency_keyword(result.text)) {
-          console.log("🚨 EMERGENCY DETECTED:", result.text);
-          handleEmergency(result.text);
-          onEmergencyDetected(result.text);
-        }
+        uploadAudioForTranscription(uri)
+          .then((result) => {
+            if (result?.text && includes_emergency_keyword(result.text)) {
+              handleEmergency(result.text); 
+              onEmergencyDetected(result.text);
+            }
+          })
+          .catch((err) => console.log("Background upload failed", err));
       }
     } catch (ex) {
       console.error("Listening loop error:", ex);
       isProcessing.current = false;
-      setTimeout(() => {
-        if (isListening.current) listenLoop();
-      }, 2000);
+      if (isListening.current) setTimeout(listenLoop, 1000);
     }
   }, [onEmergencyDetected]);
+
 
   const startContinuousListening = () => {
     if (isListening.current) return;
