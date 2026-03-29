@@ -2,7 +2,6 @@ from datetime import datetime
 
 class IAlterModel:
     AlertId: int
-    EventId: int
     AlterTime: str
     AlertStatus: str
     Description: str | None = None
