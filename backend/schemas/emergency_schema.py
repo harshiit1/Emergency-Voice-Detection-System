@@ -5,6 +5,7 @@ from typing import Literal
 class IEmergencyModel(BaseModel):
     EventId: int
     UserId: int
+    Transcript: str
     Latitude: float
     Longitude: float
     Status: Literal["PENDING" ,"RECEIVED", "ASSIGNED"]
