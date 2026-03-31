@@ -1,6 +1,6 @@
 import { getCurrentLocation } from "./locationService";
 
-const BASE_URL = "http://192.168.1.11:8000/api";
+const BASE_URL = "https://wtc-round-2-group-1-404-not-found-backend.onrender.com/api";
 export const uploadAudioForTranscription = async (audioUri: any) => {
   const formData = new FormData();
 
