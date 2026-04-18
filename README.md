@@ -1,31 +1,3 @@
-Live Deployment
-
-The project is fully deployed on Render.
-
-📱 Frontend (Mobile/Web App)
-https://wtc-round-2-group-1-404-not-found.onrender.com
-
-This is the React Native Expo web deployment where users can interact with the application interface.
-
-⚙️ Backend API (FastAPI)
-https://wtc-round-2-group-1-404-not-found-backend.onrender.com
-
-The backend handles:
-
-Voice trigger processing
-Location data handling
-Emergency alert storage
-
-🧪 API Documentation
-
-FastAPI automatically provides Swagger documentation.
-https://wtc-round-2-group-1-404-not-found-backend.onrender.com/docs
-
-THE API endpoints can be directly accessed from this interface.
-
-☁️ Deployment Details
-The application is deployed using Render Cloud Platform.
-
 Frontend Deployment
 Framework: React Native (Expo Web)
 Hosting: Render Static Web Service
