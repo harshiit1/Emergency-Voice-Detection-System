@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View, Platform } from "react-native";
 import Svg, { Line, Path, Rect } from "react-native-svg";
 import { Colors } from "../constants/colors";
 import { useEmergencyListener } from "./listener";
@@ -15,7 +15,9 @@ export default function Home() {
     });
 
   useEffect(() => {
-    startContinuousListening();
+    if (Platform.OS === "android") {
+      startContinuousListening();
+    }
     return () => stopContinuousListening();
   }, []);
 
@@ -28,66 +30,88 @@ export default function Home() {
       alert("Failed to send location. Check internet/permissions.");
     }
   };
-
+  const APK_LINK = "https://expo.dev/artifacts/eas/2jJi2WpmVHHsmWwhRxVy3E.apk";
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>ALERTI-FY</Text>
-        <Text style={styles.sub}>
-          SMART EMERGENCY VOICE DETECTION & RESPONSE SYSTEM
-        </Text>
-      </View>
+    <>
+      {Platform.OS === "web" ? (
+        <View style={styles.container}>
+          <Text style={styles.title}>ALERTI-FY</Text>
+          <Text style={styles.sub}>
+            Install our app for emergency detection 🚨
+          </Text>
 
-      <View style={styles.micRing}>
-        <Svg style={styles.micIcon} viewBox="0 0 24 24">
-          <Rect x="9" y="2" width="6" height="11" rx="3" fill="#E24B4A" />
+          <Pressable
+            style={styles.button}
+            onPress={() => {
+              window.location.href = APK_LINK;
+            }}
+          >
+            <Text style={styles.btnText}>Download APK</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.title}>ALERTI-FY</Text>
+            <Text style={styles.sub}>
+              SMART EMERGENCY VOICE DETECTION & RESPONSE SYSTEM
+            </Text>
+          </View>
 
-          <Path
-            d="M5 10v2a7 7 0 0014 0v-2"
-            stroke="#E24B4A"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
+          <View style={styles.micRing}>
+            <Svg style={styles.micIcon} viewBox="0 0 24 24">
+              <Rect x="9" y="2" width="6" height="11" rx="3" fill="#E24B4A" />
 
-          <Line
-            x1="12"
-            y1="19"
-            x2="12"
-            y2="22"
-            stroke="#E24B4A"
-            strokeWidth="2"
-          />
+              <Path
+                d="M5 10v2a7 7 0 0014 0v-2"
+                stroke="#E24B4A"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
 
-          <Line
-            x1="8"
-            y1="22"
-            x2="16"
-            y2="22"
-            stroke="#E24B4A"
-            strokeWidth="2"
-          />
-        </Svg>
-      </View>
+              <Line
+                x1="12"
+                y1="19"
+                x2="12"
+                y2="22"
+                stroke="#E24B4A"
+                strokeWidth="2"
+              />
 
-      <Text style={styles.listen}>Listening...</Text>
+              <Line
+                x1="8"
+                y1="22"
+                x2="16"
+                y2="22"
+                stroke="#E24B4A"
+                strokeWidth="2"
+              />
+            </Svg>
+          </View>
 
-      <Pressable
-        style={styles.button}
-        onPress={() => {
-          onSendAlert();
-          router.push("/trigger");
-        }}
-      >
-        <Text style={styles.btnText}>Simulate Emergency</Text>
-      </Pressable>
+          <Text style={styles.listen}>Listening...</Text>
 
-      <Pressable
-        style={styles.transponderLink}
-        onPress={() => router.push("/transponder")}
-      >
-        <Text style={styles.transponderText}>Switch to Transponder Mode</Text>
-      </Pressable>
-    </View>
+          <Pressable
+            style={styles.button}
+            onPress={() => {
+              onSendAlert();
+              router.push("/trigger");
+            }}
+          >
+            <Text style={styles.btnText}>Simulate Emergency</Text>
+          </Pressable>
+
+          <Pressable
+            style={styles.transponderLink}
+            onPress={() => router.push("/transponder")}
+          >
+            <Text style={styles.transponderText}>
+              Switch to Transponder Mode
+            </Text>
+          </Pressable>
+        </View>
+      )}
+    </>
   );
 }
 
